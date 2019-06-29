@@ -4,6 +4,7 @@ import java.lang.IllegalArgumentException
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.abs
+import kotlin.math.pow
 
 const val SECONDS = 1000L
 const val MINUTE = 60 * SECONDS
@@ -83,7 +84,7 @@ private fun getNumForm(amount: Int, units: TimeUnits): String {
 }
 
 private fun reduceDigitsNum(number: Int): Int {
-    return number % (10 * (number.toString().length - 1))
+    return number % (10.0.pow((number.toString().length - 1).toDouble())).toInt()
 }
 
 enum class TimeUnits{
