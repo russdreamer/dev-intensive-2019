@@ -35,22 +35,22 @@ fun Date.humanizeDiff(date: Date = Date()): String {
     val dif = this.time -  date.time
 
     var interval = when {
-        abs(dif) / SECONDS <= 1  -> {"только что"}
-        abs(dif) / SECONDS <= 45 -> {"несколько секунд"}
-        abs(dif) / SECONDS <= 75 -> {"минуту"}
-        abs(dif) / MINUTE <= 45 -> {"${(abs(dif) / MINUTE).toInt()} ${getNumForm((dif / MINUTE).toInt(), TimeUnits.MINUTE)}"}
-        abs(dif) / MINUTE <= 75 -> {"час"}
-        abs(dif) / HOUR <= 22 -> {"${(abs(dif) / HOUR).toInt()} ${getNumForm((dif / HOUR).toInt(), TimeUnits.HOUR)}"}
-        abs(dif) / HOUR <= 26 -> {"день"}
-        abs(dif) / DAY <= 360 -> {"${(abs(dif) / DAY).toInt()} ${getNumForm((dif / DAY).toInt(), TimeUnits.DAY)}"}
+        abs(dif) / SECONDS.toDouble() <= 1  -> {"только что"}
+        abs(dif) / SECONDS.toDouble() <= 45 -> {"несколько секунд"}
+        abs(dif) / SECONDS.toDouble() <= 75 -> {"минуту"}
+        abs(dif) / MINUTE.toDouble() <= 45 -> {"${(abs(dif) / MINUTE).toInt()} ${getNumForm((dif / MINUTE).toInt(), TimeUnits.MINUTE)}"}
+        abs(dif) / MINUTE.toDouble() <= 75 -> {"час"}
+        abs(dif) / HOUR.toDouble() <= 22 -> {"${(abs(dif) / HOUR).toInt()} ${getNumForm((dif / HOUR).toInt(), TimeUnits.HOUR)}"}
+        abs(dif) / HOUR.toDouble() <= 26 -> {"день"}
+        abs(dif) / DAY.toDouble() <= 360 -> {"${(abs(dif) / DAY).toInt()} ${getNumForm((dif / DAY).toInt(), TimeUnits.DAY)}"}
         else ->{""}
     }
 
     when{
-        dif / DAY < -360 -> interval = "более года назад"
-        dif / SECONDS < -1  -> interval += " назад"
-        dif / SECONDS <= 1 -> {}
-        dif / DAY <= 360  -> interval = "через $interval"
+        dif / DAY.toDouble() < -360 -> interval = "более года назад"
+        dif / SECONDS.toDouble() < -1  -> interval += " назад"
+        dif / SECONDS.toDouble() <= 1 -> {}
+        dif / DAY.toDouble() <= 360  -> interval = "через $interval"
         else -> interval = "более чем через год"
     }
 
