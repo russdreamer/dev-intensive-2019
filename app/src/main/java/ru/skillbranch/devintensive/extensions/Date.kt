@@ -1,6 +1,5 @@
 package ru.skillbranch.devintensive.extensions
 
-import java.lang.IllegalArgumentException
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.abs
@@ -57,34 +56,34 @@ fun Date.humanizeDiff(date: Date = Date()): String {
     return interval
 }
 
-private fun getNumForm(amount: Int, units: TimeUnits): String {
+ fun getNumForm(amount: Int, units: TimeUnits): String {
     val posAmount = abs(amount)
 
-    return when(units){
-        TimeUnits.MINUTE -> when(posAmount){
-            0, in 5..19 -> "минут"
-            1 -> "минуту"
-            in 2..4 -> "минуты"
-            else -> getNumForm(reduceDigitsNum(posAmount) ,TimeUnits.MINUTE)
-        }
-        TimeUnits.HOUR -> when(posAmount){
-            0, in 5..19 -> "часов"
-            1 -> "час"
-            in 2..4 -> "часа"
-            else -> getNumForm(reduceDigitsNum(posAmount) ,TimeUnits.HOUR)
-        }
-        TimeUnits.DAY -> when(posAmount){
-            0, in 5..19 -> "дней"
-            1 -> "день"
-            in 2..4 -> "дня"
-            else -> getNumForm(reduceDigitsNum(posAmount) ,TimeUnits.DAY)
-        }
-        else -> throw IllegalArgumentException()
+    return when(posAmount){
+        0, in 5..19 -> Plurals.MANY.get(units)
+        1 -> Plurals.ONE.get(units)
+        in 2..4 -> Plurals.FEW.get(units)
+        else -> getNumForm(reduceDigitsNum(posAmount) ,units)
     }
 }
 
 private fun reduceDigitsNum(number: Int): Int {
     return number % (10.0.pow((number.toString().length - 1).toDouble())).toInt()
+}
+
+enum class Plurals(private val minute: String, private val hour: String, private val day: String){
+    ONE("минуту", "час", "день"),
+    FEW("минуты", "часа", "дня"),
+    MANY("минут", "часов", "дней");
+
+    fun get(unit: TimeUnits): String {
+        return when(unit){
+            TimeUnits.MINUTE -> minute
+            TimeUnits.HOUR -> hour
+            TimeUnits.DAY -> day
+            else -> ""
+        }
+    }
 }
 
 enum class TimeUnits{
