@@ -22,13 +22,11 @@ object Utils {
     }
 
     private fun getTranslChar(char: Char, map: HashMap<Char, String>): String {
-        val transl  = map[char.toLowerCase()]
-        return if (transl != null)
-            if (char.isUpperCase() && transl.isNotEmpty())
-                transl[0].toUpperCase() + transl.substring(1)
-            else transl
+        val transl  = map[char.toLowerCase()] ?: char.toString()
 
-        else char.toString()
+        return if (char.isUpperCase() && transl.isNotEmpty())
+            transl.capitalize()
+        else transl
     }
 
     private fun fillTranslitMap(): HashMap<Char, String> {
