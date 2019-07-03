@@ -20,14 +20,14 @@ fun Date.humanizeDiff(date: Date = Date()): String {
     val isPast = this.time < date.time
 
     return when {
-        dif <= SECOND.value -> {"только что"}
+        dif <= SECOND.value -> "только что"
         dif <= SECOND.value * 45 -> getTenseForm("несколько секунд", isPast)
         dif <= SECOND.value * 75 -> getTenseForm("минуту", isPast)
-        dif <= MINUTE.value * 45 -> getTenseForm(getNormalizedInterval(dif, MINUTE), isPast)
+        dif <= MINUTE.value * 45 -> getTenseForm(MINUTE.plural((dif / MINUTE.value).toInt()), isPast)
         dif <= MINUTE.value * 75 -> getTenseForm("час", isPast)
-        dif <= HOUR.value * 22 -> getTenseForm(getNormalizedInterval(dif, HOUR), isPast)
+        dif <= HOUR.value * 22 -> getTenseForm(HOUR.plural((dif / HOUR.value).toInt()), isPast)
         dif <= HOUR.value * 26 -> getTenseForm("день", isPast)
-        dif <= DAY.value * 360 -> getTenseForm(getNormalizedInterval(dif, DAY), isPast)
+        dif <= DAY.value * 360 -> getTenseForm(DAY.plural((dif / DAY.value).toInt()), isPast)
         else -> if(isPast) "более года назад" else "более чем через год"
     }
 }
@@ -38,18 +38,13 @@ fun getTenseForm(interval: String, isPast: Boolean): String {
     return "$prefix $interval $postfix".trim()
 }
 
-fun getNormalizedInterval(dif: Long, units: TimeUnits): String {
-    val amount = dif / units.value
-    return "$amount ${getPluralForm(amount, units)}"
-}
-
-fun getPluralForm(amount: Long, units: TimeUnits): String {
+fun getPluralForm(amount: Int, units: TimeUnits): String {
     val posAmount = abs(amount) % 100
 
     return when(posAmount){
-        1L -> Plurals.ONE.get(units)
+        1 -> Plurals.ONE.get(units)
         in 2..4 -> Plurals.FEW.get(units)
-        0L, in 5..19 -> Plurals.MANY.get(units)
+        0, in 5..19 -> Plurals.MANY.get(units)
         else -> getPluralForm(posAmount % 10, units)
     }
 }
@@ -74,5 +69,9 @@ enum class TimeUnits(val value:Long){
     MINUTE(60 * SECOND.value),
     HOUR(60 * MINUTE.value),
     DAY(24 * HOUR.value);
+
+    fun plural(value: Int): String{
+        return "$value ${getPluralForm(value, this)}"
+    }
 }
 
