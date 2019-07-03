@@ -49,17 +49,17 @@ fun getPluralForm(amount: Int, units: TimeUnits): String {
     }
 }
 
-enum class Plurals(private val minute: String, private val hour: String, private val day: String){
-    ONE("минуту", "час", "день"),
-    FEW("минуты", "часа", "дня"),
-    MANY("минут", "часов", "дней");
+enum class Plurals(private val second: String, private val minute: String, private val hour: String, private val day: String){
+    ONE("секунду", "минуту", "час", "день"),
+    FEW("секунды", "минуты", "часа", "дня"),
+    MANY("секунд","минут", "часов", "дней");
 
     fun get(unit: TimeUnits): String {
         return when(unit){
+            SECOND -> second
             MINUTE -> minute
             HOUR -> hour
             DAY -> day
-            else -> ""
         }
     }
 }
