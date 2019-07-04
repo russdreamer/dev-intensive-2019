@@ -1,8 +1,8 @@
 package ru.skillbranch.devintensive.extensions
 
-fun String.truncate(endIndex: Int = 16): String{
+fun String.truncate(length: Int = 16): String{
     val trimmedMes = this.trim()
-    return if (trimmedMes.length <= endIndex + 1) trimmedMes else trimmedMes.substring(0, endIndex + 1).trim() + "..."
+    return if (trimmedMes.length <= length) trimmedMes else trimmedMes.substring(0, length).trim() + "..."
 }
 
 fun String.stripHtml(): String{
