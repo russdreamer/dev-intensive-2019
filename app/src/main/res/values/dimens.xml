@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- font sizes -->
+    <dimen name="font_large_24">24sp</dimen>
+    <dimen name="font_normal_16">24sp</dimen>
+    <dimen name="font_small_12">12sp</dimen>
+
+    <!-- typical spaces between two views -->
+    <dimen name="spacing_huge_32">32dp</dimen>
+    <dimen name="spacing_large_24">24dp</dimen>
+    <dimen name="spacing_normal_16">16dp</dimen>
+    <dimen name="spacing_small_8">8dp</dimen>
+    <dimen name="spacing_tiny_4">4dp</dimen>
+
+    <!-- image button sizes -->
+    <dimen name="imageButton_large_24">32dp</dimen>
+    <dimen name="imageButton_normal_16">16dp</dimen>
+    <dimen name="imageButton_small_8">8dp</dimen>
+</resources>
