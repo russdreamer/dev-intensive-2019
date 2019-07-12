@@ -16,7 +16,7 @@ import ru.skillbranch.devintensive.models.Bender.Question
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
     lateinit var benderImage: ImageView
-    lateinit var textView: TextView
+    lateinit var textTxt: TextView
     lateinit var messageEt: EditText
     lateinit var sendBtn: ImageView
 
@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         setContentView(R.layout.activity_main)
 
         benderImage = iv_bender
-        textView = tv_text
+        textTxt = tv_text
         messageEt = et_message
         sendBtn = iv_send
 
@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         val(r, g, b) = benderObj.status.color
         benderImage.setColorFilter(Color.rgb(r, g, b), PorterDuff.Mode.MULTIPLY)
 
-        textView.text = benderObj.askQuestion()
+        textTxt.text = benderObj.askQuestion()
         sendBtn.setOnClickListener(this)
     }
 
@@ -67,7 +67,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             Question.SERIAL -> "Серийный номер содержит только цифры, и их 7"
             else -> "На этом все, вопросов больше нет"
         }
-        textView.text = errorMessage + "\n" + benderObj.question.question
+        textTxt.text = errorMessage + "\n" + benderObj.question.question
         messageEt.setText("")
     }
 
@@ -80,7 +80,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         messageEt.setText("")
         val(r, g, b) = color
         benderImage.setColorFilter(Color.rgb(r, g, b), PorterDuff.Mode.MULTIPLY)
-        textView.text = phase
+        textTxt.text = phase
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
