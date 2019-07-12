@@ -51,13 +51,20 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     override fun onClick(v: View?) {
-        if (v?.id == R.id.iv_send) {
-            val (phase, color) = benderObj.listenAnswer(messageEt.text.toString().toLowerCase())
-            messageEt.setText("")
-            val(r, g, b) = color
-            benderImage.setColorFilter(Color.rgb(r, g, b), PorterDuff.Mode.MULTIPLY)
-            textView.text = phase
-        }
+        if (v?.id == R.id.iv_send)
+            if (isAnswerValid()) sendAnswer()
+    }
+
+    private fun isAnswerValid(): Boolean {
+       return benderObj.question.validate(messageEt.text.toString())
+    }
+
+    private fun sendAnswer() {
+        val (phase, color) = benderObj.listenAnswer(messageEt.text.toString().toLowerCase())
+        messageEt.setText("")
+        val(r, g, b) = color
+        benderImage.setColorFilter(Color.rgb(r, g, b), PorterDuff.Mode.MULTIPLY)
+        textView.text = phase
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
