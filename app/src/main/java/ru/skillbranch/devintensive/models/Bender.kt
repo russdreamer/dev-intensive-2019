@@ -24,9 +24,20 @@ class Bender (var status: Status = Status.NORMAL, var question: Question = Quest
             "Отлично - ты справился"
         }
         else {
-            status = status.nextStatus()
-            "Это неправильный ответ"
+            if (status == Status.CRITICAL){
+                resetStates()
+                "Это неправильный ответ. Давай все по новой"
+            }
+            else{
+                status = status.nextStatus()
+                "Это неправильный ответ"
+            }
         }
+    }
+
+    private fun resetStates() {
+        status = Status.NORMAL
+        question = Question.NAME
     }
 
     enum class Status(val color: Triple<Int, Int, Int>){
