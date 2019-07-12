@@ -6,8 +6,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".MainActivity"
-        android:orientation="vertical"
->
+        android:orientation="vertical">
 
     <TextView
             android:id="@+id/tv_text"
@@ -35,6 +34,7 @@
             android:layout_marginTop="@dimen/spacing_normal_16">
         <EditText
                 android:id="@+id/et_message"
+                android:imeOptions="actionDone"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -53,9 +53,8 @@
                 android:layout_height="@dimen/imageButton_large_24"
                 android:src="@drawable/ic_send_black_24dp"
                 android:layout_gravity="center"
-                android:layout_marginRight="@dimen/spacing_normal_16"
+                android:layout_marginRight="@dimen/spacing_normal_16"/>
 
-        />
     </LinearLayout>
 
 </LinearLayout>

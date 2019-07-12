@@ -29,12 +29,9 @@ class Bender (var status: Status = Status.NORMAL, var question: Question = Quest
         CRITICAL(Triple(255, 255, 0));
 
         fun nextStatus(): Status{
-            return if (this.ordinal < values().lastIndex){
+            return if (this.ordinal < values().lastIndex)
                 values()[this.ordinal + 1]
-            }
-            else{
-                values()[0]
-            }
+            else values()[0]
         }
     }
 

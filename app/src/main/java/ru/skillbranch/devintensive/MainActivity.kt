@@ -3,8 +3,9 @@ package ru.skillbranch.devintensive
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Bundle
-import android.util.Log
+import android.text.InputType
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
@@ -23,16 +24,20 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        Log.d("M_MainActivity", "onCreate")
 
         benderImage = iv_bender
         textView = tv_text
         messageEt = et_message
         sendBtn = iv_send
 
+        messageEt.setRawInputType(InputType.TYPE_CLASS_TEXT)
+        messageEt.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) sendBtn.performClick()
+            false
+        }
+
         val status = savedInstanceState?.getString("STATUS") ?: Bender.Status.NORMAL.name
         val question = savedInstanceState?.getString("QUESTION") ?: Bender.Question.NAME.name
-        Log.d("M_MainActivity", "status = $status    question = $question")
         benderObj = Bender(Bender.Status.valueOf(status), Bender.Question.valueOf(question))
 
         val(r, g, b) = benderObj.status.color
@@ -40,36 +45,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
         textView.text = benderObj.askQuestion()
         sendBtn.setOnClickListener(this)
-    }
-
-    override fun onRestart() {
-        super.onRestart()
-        Log.d("M_MainActivity", "onRestart")
-    }
-
-    override fun onStart() {
-        super.onStart()
-        Log.d("M_MainActivity", "onStart")
-    }
-
-    override fun onResume() {
-        super.onResume()
-        Log.d("M_MainActivity", "onResume")
-    }
-
-    override fun onPause() {
-        super.onPause()
-        Log.d("M_MainActivity", "onPause")
-    }
-
-    override fun onStop() {
-        super.onStop()
-        Log.d("M_MainActivity", "onStop")
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.d("M_MainActivity", "onDestroy")
     }
 
     override fun onClick(v: View?) {
@@ -86,6 +61,5 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         super.onSaveInstanceState(outState)
         outState?.putString("STATUS", benderObj.status.name)
         outState?.putString("QUESTION", benderObj.question.name)
-        Log.d("M_MainActivity", "instance is saved")
     }
 }
