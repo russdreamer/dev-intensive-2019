@@ -59,7 +59,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun makeErrorMessage() {
-        textView.text = when(benderObj.question){
+        val errorMessage = when(benderObj.question){
             Question.NAME -> "Имя должно начинаться с заглавной буквы"
             Question.PROFESSION -> "Профессия должна начинаться со строчной буквы"
             Question.MATERIAL -> "Материал не должен содержать цифр"
@@ -67,6 +67,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             Question.SERIAL -> "Серийный номер содержит только цифры, и их 7"
             else -> "На этом все, вопросов больше нет"
         }
+        textView.text = errorMessage + "\n" + benderObj.question.question
         messageEt.setText("")
     }
 
