@@ -30,12 +30,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         messageEt = et_message
         sendBtn = iv_send
 
-        messageEt.setRawInputType(InputType.TYPE_CLASS_TEXT)
-        messageEt.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) sendBtn.performClick()
-            false
-        }
-
+        makeSendOnActionDone(messageEt)
         val status = savedInstanceState?.getString("STATUS") ?: Bender.Status.NORMAL.name
         val question = savedInstanceState?.getString("QUESTION") ?: Bender.Question.NAME.name
         benderObj = Bender(Bender.Status.valueOf(status), Bender.Question.valueOf(question))
@@ -45,6 +40,14 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
         textView.text = benderObj.askQuestion()
         sendBtn.setOnClickListener(this)
+    }
+
+    private fun makeSendOnActionDone(editText: EditText) {
+        editText.setRawInputType(InputType.TYPE_CLASS_TEXT)
+        editText.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) sendBtn.performClick()
+            false
+        }
     }
 
     override fun onClick(v: View?) {
