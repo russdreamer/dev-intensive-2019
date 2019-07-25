@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                                   xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                   xmlns:tools="http://schemas.android.com/tools"
+                                                   android:layout_width="match_parent"
+                                                   android:layout_height="match_parent">
+
+    <ImageView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:srcCompat="@drawable/profile_bg"
+            android:id="@+id/imageView"
+            app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintDimensionRatio="16:9" android:scaleType="centerCrop"/>
+    <ImageView
+            android:layout_height="@dimen/avatar_round_size"
+            app:srcCompat="@drawable/avatar_default"
+            android:id="@+id/imageView2"
+            android:layout_width="@dimen/avatar_round_size"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toBottomOf="@+id/imageView"
+            app:layout_constraintHorizontal_bias="0.5" app:layout_constraintBottom_toTopOf="@+id/textView"/>
+    <ImageButton
+            android:layout_width="@dimen/btn_round_size_40"
+            android:layout_height="@dimen/btn_round_size_40" app:srcCompat="@drawable/ic_switch_day_night"
+            android:id="@+id/imageButton"
+            android:background="@drawable/btn_round_bg" app:layout_constraintBottom_toBottomOf="@+id/imageView2"
+            app:layout_constraintTop_toTopOf="@+id/imageView2" app:layout_constraintEnd_toStartOf="@+id/imageView2"
+            android:layout_marginEnd="32dp"/>
+    <ImageButton
+            android:layout_width="@dimen/btn_round_size_40"
+            android:layout_height="@dimen/btn_round_size_40" app:srcCompat="@drawable/ic_edit_black_24dp"
+            android:id="@+id/imageButton2"
+            android:background="@drawable/btn_round_bg" app:layout_constraintStart_toEndOf="@+id/imageView2"
+            app:layout_constraintTop_toTopOf="@+id/imageView2"
+            app:layout_constraintBottom_toBottomOf="@+id/imageView2" android:layout_marginStart="32dp"/>
+    <TextView
+            android:text="TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView" style="@style/Profile.Header.Nickname"
+            app:layout_constraintTop_toBottomOf="@+id/imageView2" app:layout_constraintStart_toStartOf="@+id/imageView2"
+            app:layout_constraintEnd_toEndOf="@+id/imageView2" tools:text="John Doe"
+            app:layout_constraintHorizontal_bias="0.5" app:layout_constraintBottom_toTopOf="@+id/textView2"/>
+    <TextView
+            android:text="TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView2" style="@style/Profile.Header.Rank"
+            app:layout_constraintTop_toBottomOf="@+id/textView" app:layout_constraintEnd_toEndOf="@+id/textView"
+            app:layout_constraintStart_toStartOf="@+id/textView"
+            tools:text="Junior Android Developer" app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintBottom_toTopOf="@+id/imageView" android:layout_marginBottom="32dp"/>
+    <View
+            android:layout_width="0dp"
+            android:layout_height="80dp"
+            android:id="@+id/view" app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toBottomOf="@+id/imageView"
+            android:background="@color/color_primary"/>
+    <View
+            android:layout_width="1dp"
+            android:layout_height="0dp"
+            android:id="@+id/view2"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/imageView" app:layout_constraintBottom_toBottomOf="@+id/view"
+            app:layout_constraintTop_toTopOf="@+id/view" android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp" android:background="@color/color_divider_light"/>
+    <TextView
+            android:text="0"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView3" style="@style/Profile.Metrics.Value"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/textView4" app:layout_constraintTop_toTopOf="@+id/view"
+            app:layout_constraintVertical_chainStyle="packed" app:layout_constraintEnd_toStartOf="@+id/view2"/>
+    <TextView
+            android:text="@string/profile_label_respect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView4" style="@style/Profile.Metrics.Label"
+            app:layout_constraintTop_toBottomOf="@+id/textView3" app:layout_constraintEnd_toEndOf="@+id/textView3"
+            app:layout_constraintStart_toStartOf="@+id/textView3"
+            app:layout_constraintHorizontal_bias="0.5" app:layout_constraintBottom_toBottomOf="@+id/view"/>
+    <TextView
+            android:text="0"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView5" style="@style/Profile.Metrics.Value"
+            app:layout_constraintTop_toBottomOf="@+id/imageView" app:layout_constraintBottom_toTopOf="@+id/textView6"
+            app:layout_constraintVertical_chainStyle="packed" app:layout_constraintEnd_toEndOf="@+id/view"
+            app:layout_constraintStart_toEndOf="@+id/view2"/>
+    <TextView
+            android:text="@string/profile_label_rating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView6" style="@style/Profile.Metrics.Label"
+            app:layout_constraintTop_toBottomOf="@+id/textView5" app:layout_constraintEnd_toEndOf="@+id/textView5"
+            app:layout_constraintStart_toStartOf="@+id/textView5" app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintBottom_toBottomOf="@+id/view"/>
+    <ImageView
+            android:layout_width="@dimen/btn_round_size_40"
+            android:layout_height="@dimen/btn_round_size_40" app:srcCompat="@drawable/ic_avatar"
+            android:id="@+id/imageView3" android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@+id/view" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="16dp"/>
+    <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@+id/imageView3"
+            app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="16dp"
+            app:layout_constraintTop_toTopOf="@+id/imageView3" android:id="@+id/textInputLayout"
+            android:layout_marginStart="16dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/profile_hint_first_name" style="@style/Profile.EditText.Single"
+                tools:text="John"/>
+    </com.google.android.material.textfield.TextInputLayout>
+    <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/textInputLayout"
+            app:layout_constraintStart_toStartOf="@+id/textInputLayout" app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="16dp" android:id="@+id/textInputLayout2">
+
+        <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/profile_hint_last_name" style="@style/Profile.EditText.Single" tools:text="Doe"
+                android:textColor="@color/color_primary_light"/>
+    </com.google.android.material.textfield.TextInputLayout>
+    <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:id="@+id/divider"
+            app:layout_constraintTop_toBottomOf="@+id/textInputLayout2"
+            app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="72dp" android:background="@color/color_divider_dark"
+            android:layout_marginTop="5dp"/>
+    <ImageView
+            android:layout_width="@dimen/btn_round_size_40"
+            android:layout_height="@dimen/btn_round_size_40" app:srcCompat="@drawable/ic_about"
+            android:id="@+id/imageView4"
+            app:layout_constraintTop_toBottomOf="@+id/divider"
+            app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"/>
+    <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@+id/imageView4" app:layout_constraintTop_toTopOf="@+id/imageView4"
+            app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="16dp" android:layout_marginStart="16dp"
+            android:id="@+id/textInputLayout3">
+
+        <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/profile_hint_about" style="@style/Profile.EditText.MultiLine"/>
+    </com.google.android.material.textfield.TextInputLayout>
+    <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:id="@+id/divider2"
+            app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="72dp" app:layout_constraintTop_toBottomOf="@+id/textInputLayout3"
+            android:background="@color/color_divider_dark" android:layout_marginTop="5dp"/>
+    <ImageView
+            android:layout_width="@dimen/btn_round_size_40"
+            android:layout_height="@dimen/btn_round_size_40" app:srcCompat="@drawable/ic_about"
+            android:id="@+id/imageView5"
+            android:background="@drawable/ic_repo" app:layout_constraintTop_toBottomOf="@+id/divider2"
+            app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"/>
+    <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@+id/imageView5" app:layout_constraintTop_toTopOf="@+id/imageView5"
+            android:id="@+id/textInputLayout4"
+            app:layout_constraintEnd_toStartOf="@+id/imageView7" android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="46dp"
+                android:hint="@string/profile_hint_repository" style="@style/Profile.EditText.Single"/>
+    </com.google.android.material.textfield.TextInputLayout>
+    <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" app:srcCompat="@drawable/ic_eye_24dp"
+            android:id="@+id/imageView7"
+            app:layout_constraintTop_toTopOf="@+id/textInputLayout4"
+            app:layout_constraintBottom_toBottomOf="@+id/textInputLayout4"
+            app:layout_constraintStart_toEndOf="@+id/textInputLayout4" app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="16dp"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

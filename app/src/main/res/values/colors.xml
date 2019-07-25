@@ -2,8 +2,14 @@
 <resources>
     <color name="color_primary">#2A1956</color>
     <color name="color_primary_dark">#1C0E42</color>
+    <color name="color_primary_light">#473770</color>
     <color name="color_accent">#FC4C4C</color>
+    <color name="color_accent_night">#2196F3</color>
+    <color name="color_accent_secondary">#BEAC32EE</color>
     <color name="color_gray">#9CA9BA</color>
     <color name="color_gray_dark">#675F7F</color>
     <color name="color_gray_light">#ECECEC</color>
+
+    <color name="color_divider_dark">#1F000000</color>
+    <color name="color_divider_light">#1FFFFFFF</color>
 </resources>

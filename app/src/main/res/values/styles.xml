@@ -1,11 +1,58 @@
 <resources>
+    <style name="Profile">
 
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/color_primary</item>
-        <item name="colorPrimaryDark">@color/color_primary_dark</item>
-        <item name="colorAccent">@color/color_accent</item>
+    </style>
+
+    <style name="Profile.EditText" parent="Profile">
+        <item name="android:textColor">?attr/colorPrimary</item>
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:enabled">false</item>
+        <item name="android:focusableInTouchMode">false</item>
+        <item name="android:focusable">false</item>
+    </style>
+
+    <style name="Profile.EditText.Single" parent="Profile.EditText">
+        <item name="android:singleLine">true</item>
+    </style>
+
+    <style name="Profile.EditText.MultiLine" parent="Profile.EditText">
+        <item name="android:inputType">textMultiLine</item>
+        <item name="android:maxLength">128</item>
+    </style>
+
+    <style name="Profile.Header" parent="Profile">
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="Profile.Header.Nickname" parent="Profile.Header">
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textSize">@dimen/font_large_20</item>
+        <item name="android:layout_marginTop">@dimen/spacing_normal_16</item>
+    </style>
+
+    <style name="Profile.Header.Rank" parent="Profile.Header">
+        <item name="android:textSize">@dimen/font_normal_16</item>
+    </style>
+
+    <style name="Profile.Metrics" parent="Profile">
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="Profile.Metrics.Label" parent="Profile.Metrics">
+        <item name="android:textSize">@dimen/font_normal_16</item>
+    </style>
+
+    <style name="Profile.Metrics.Value" parent="Profile.Metrics">
+        <item name="android:drawablePadding">4dp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textSize">@dimen/font_large_20</item>
+    </style>
+    <style name="Profile.InfoItem">
+        <item name="android:paddingTop">@dimen/spacing_normal_16</item>
+        <item name="android:paddingBottom">5dp</item>
+        <item name="android:paddingLeft">@dimen/spacing_normal_16</item>
+        <item name="android:paddingRight">@dimen/spacing_normal_16</item>
+        <item name="android:minHeight">72dp</item>
     </style>
 
 </resources>
