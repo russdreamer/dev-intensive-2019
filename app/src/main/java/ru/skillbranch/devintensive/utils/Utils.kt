@@ -1,6 +1,10 @@
 package ru.skillbranch.devintensive.utils
 
+import android.content.Context
 import java.lang.StringBuilder
+import android.util.DisplayMetrics
+
+
 
 object Utils {
     fun parseFullName(fullName: String?): Pair<String?, String?>{
@@ -74,5 +78,13 @@ object Utils {
         val firstInit = name?.toString() ?: ""
         val secondInit = surname?.toString() ?: ""
         return "$firstInit$secondInit".ifEmpty { null }
+    }
+
+    fun convertDpToPx(context: Context, dp: Float): Int {
+        return (dp * (context.resources.displayMetrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT)).toInt()
+    }
+
+    fun convertPxToDp(context: Context, px: Float): Float {
+        return px / (context.resources.displayMetrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT)
     }
 }

@@ -32,11 +32,12 @@
                          android:layout_marginEnd="@dimen/spacing_huge_32"
                          android:layout_marginTop="36dp"/>
 
-            <ImageView android:id="@+id/iv_avatar"
-                       android:layout_width="@dimen/avatar_round_size"
-                       android:layout_height="@dimen/avatar_round_size"
-                       android:src="@drawable/avatar_default"
-                       android:layout_centerHorizontal="true"/>
+            <ru.skillbranch.devintensive.ui.custom.CircleImageView
+                    android:id="@+id/iv_avatar"
+                    android:layout_width="@dimen/avatar_round_size"
+                    android:layout_height="@dimen/avatar_round_size"
+                    android:src="@drawable/lesson_time"
+                    android:layout_centerHorizontal="true"/>
 
             <ImageButton android:id="@+id/btn_edit"
                          android:layout_width="@dimen/btn_round_size_40"
@@ -83,7 +84,7 @@
                       android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
                       android:text="0"
-                      android:drawableLeft="@drawable/ic_sp_24"/>
+                      android:drawableStart="@drawable/ic_sp_24"/>
 
             <TextView style="@style/Profile.Metrics.Value"
                       android:layout_width="wrap_content"
@@ -110,7 +111,7 @@
                       android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
                       android:text="0"
-                      android:drawableLeft="@drawable/ic_respect_24"/>
+                      android:drawableStart="@drawable/ic_respect_24"/>
 
             <TextView style="@style/Profile.Metrics.Value"
                       android:layout_width="wrap_content"
@@ -226,7 +227,7 @@
                    android:layout_height="24dp"
                    android:src="@drawable/ic_eye_24dp"
                    android:layout_gravity="center_vertical"
-                   android:layout_marginLeft="@dimen/spacing_normal_16"/>
+                   android:layout_marginStart="@dimen/spacing_normal_16"/>
     </LinearLayout>
 
 </LinearLayout>
