@@ -23,9 +23,7 @@ class CircleImageView @JvmOverloads constructor (
     }
 
     private var borderColor = DEFAULT_BORDER_COLOR
-    val scale = getContext().resources.displayMetrics.density
-    var pixels = (20 * scale + 0.5f).toInt()
-    private var borderWidth = pixels
+    private var borderWidth = Utils.convertDpToPx(context, 2F)
 
     init {
         if (attrs != null) {
