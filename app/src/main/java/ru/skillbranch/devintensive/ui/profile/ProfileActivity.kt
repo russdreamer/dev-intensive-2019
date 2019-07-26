@@ -67,6 +67,7 @@ private fun initViewModel() {
 
         btn_edit.setOnClickListener {
             if (isEditMode) {
+                validateRepository()
                 saveProfileInfo()
             }
             isEditMode = isEditMode.not()
@@ -76,6 +77,24 @@ private fun initViewModel() {
         btn_switch_theme.setOnClickListener {
             viewModel.switchTheme()
         }
+    }
+
+    private fun validateRepository() {
+        val regexStr = "^(?:https://)?(?:www.)?(?:github.com/)[^/|\\s]+(?<!${getRegexExceptions()})(?:/)?$"
+        val regex = Regex(regexStr)
+
+        if (!regex.matches(et_repository.text.toString().trim())){
+            et_repository.text.clear()
+            et_repository.error = "Невалидный адрес репозитория"
+        }
+    }
+
+    private fun getRegexExceptions(): String {
+        val exceptions = arrayOf(
+            "enterprise", "features", "topics", "collections", "trending", "events", "marketplace", "pricing",
+            "nonprofit", "customer-stories", "security", "login", "join"
+        )
+        return exceptions.joinToString("|\\b","\\b")
     }
 
     private fun showCurrentMode(isEdit: Boolean) {
@@ -115,7 +134,7 @@ private fun initViewModel() {
             firstName = et_first_name.text.toString(),
             lastName = et_last_name.text.toString(),
             about = et_about.text.toString(),
-            repository = et_repository.text.toString()
+            repository = et_repository.text.toString().trim()
         ).apply {
             viewModel.saveProfileData(this)
         }
