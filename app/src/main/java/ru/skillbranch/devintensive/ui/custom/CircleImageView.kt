@@ -7,7 +7,6 @@ import android.graphics.Bitmap.Config
 import android.graphics.PorterDuff.Mode
 import android.graphics.drawable.BitmapDrawable
 import android.util.AttributeSet
-import android.util.TypedValue
 import android.widget.ImageView
 import androidx.annotation.ColorRes
 import ru.skillbranch.devintensive.R
@@ -66,16 +65,16 @@ class CircleImageView @JvmOverloads constructor (
          canvas.drawBitmap(strokedBmp, 0F, 0F, null)
     }
 
-    fun generateAvatar(text: String, size: Int, theme: Resources.Theme){
+    fun generateAvatar(text: String, sizeSp: Int){
         /* don't render if initials haven't changed */
-        if (bitmap == null && (this.text == null || !this.text.equals(text))){
+        if (bitmap == null || this.text == null || !this.text.equals(text)){
             val paint = Paint(Paint.ANTI_ALIAS_FLAG)
-            paint.textSize = size.toFloat()
+            paint.textSize = sizeSp.toFloat()
             paint.color = Color.WHITE
             paint.textAlign = Paint.Align.CENTER
 
             val image = Bitmap.createBitmap(layoutParams.height, layoutParams.height, Config.ARGB_8888)
-            image.eraseColor(resources.getColor(R.color.color_accent, theme))
+            image.eraseColor(resources.getColor(R.color.color_accent, context.theme))
             val canvas = Canvas(image)
 
             val textBounds = Rect()
@@ -87,6 +86,7 @@ class CircleImageView @JvmOverloads constructor (
             val textBottom = backgroundBounds.centerY() - textBounds.exactCenterY()
             canvas.drawText(text, backgroundBounds.centerX(), textBottom, paint)
 
+            this.text = text
             bitmap = image
             invalidate()
         }
