@@ -37,7 +37,8 @@
                     android:layout_width="@dimen/avatar_round_size"
                     android:layout_height="@dimen/avatar_round_size"
                     android:src="@drawable/avatar_default"
-                    android:layout_centerHorizontal="true"/>
+                    android:layout_centerHorizontal="true"
+                    />
 
             <ImageButton android:id="@+id/btn_edit"
                          android:layout_width="@dimen/btn_round_size_40"

@@ -81,10 +81,7 @@ object Utils {
     }
 
     fun convertDpToPx(context: Context, dp: Float): Int {
-        return (dp * (context.resources.displayMetrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT)).toInt()
-    }
-
-    fun convertPxToDp(context: Context, px: Float): Float {
-        return px / (context.resources.displayMetrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT)
+        val scale = context.resources.displayMetrics.density
+        return (dp * scale + 0.5f).toInt()
     }
 }
