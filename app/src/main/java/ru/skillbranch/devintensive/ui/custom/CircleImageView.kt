@@ -10,6 +10,8 @@ import android.util.AttributeSet
 import android.util.TypedValue
 import android.widget.ImageView
 import androidx.annotation.ColorRes
+import androidx.core.content.ContextCompat
+import ru.skillbranch.devintensive.App
 import ru.skillbranch.devintensive.R
 import ru.skillbranch.devintensive.utils.Utils
 import kotlin.math.min
@@ -47,10 +49,13 @@ class CircleImageView @JvmOverloads constructor (
 
     fun getBorderColor(): Int = borderColor
 
-    fun setBorderColor(hex: String) { borderColor = Color.parseColor(hex) }
+    fun setBorderColor(hex: String) {
+        borderColor = Color.parseColor(hex)
+        this.invalidate()
+    }
 
     fun setBorderColor(@ColorRes colorId: Int) {
-        borderColor = resources.getColor(colorId, context.theme)
+        borderColor = ContextCompat.getColor(App.applicationContext(), colorId)
         this.invalidate()
     }
 
@@ -77,8 +82,9 @@ class CircleImageView @JvmOverloads constructor (
             val image = Bitmap.createBitmap(layoutParams.height, layoutParams.height, Config.ARGB_8888)
             val color = TypedValue()
             theme.resolveAttribute(R.attr.colorAccent, color, true)
-            image.eraseColor(color.data)
+
             val canvas = Canvas(image)
+            canvas.drawColor(color.data)
 
             val textBounds = Rect()
             paint.getTextBounds(text, 0, text.length, textBounds)
