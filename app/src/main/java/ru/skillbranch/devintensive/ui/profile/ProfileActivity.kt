@@ -80,12 +80,14 @@ private fun initViewModel() {
     }
 
     private fun validateRepository() {
+        val text = et_repository.text.toString().trim()
+
         val regexStr = "^(?:https://)?(?:www.)?(?:github.com/)[^/|\\s]+(?<!${getRegexExceptions()})(?:/)?$"
         val regex = Regex(regexStr)
 
-        if (!regex.matches(et_repository.text.toString().trim())){
+        if (text.isNotEmpty() && !regex.matches(text)){
             et_repository.text.clear()
-            et_repository.error = "Невалидный адрес репозитория"
+            wr_repository.error = "Невалидный адрес репозитория"
         }
     }
 
