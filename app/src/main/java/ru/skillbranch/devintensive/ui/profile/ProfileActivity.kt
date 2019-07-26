@@ -67,7 +67,6 @@ private fun initViewModel() {
 
         btn_edit.setOnClickListener {
             if (isEditMode) {
-                validateRepository()
                 saveProfileInfo()
             }
             isEditMode = isEditMode.not()
@@ -76,13 +75,6 @@ private fun initViewModel() {
 
         btn_switch_theme.setOnClickListener {
             viewModel.switchTheme()
-        }
-    }
-
-    private fun validateRepository() {
-        if (et_repository.text.toString() != "1"){
-            et_repository.text.clear()
-            et_repository.error = "Невалидный адрес репозитория"
         }
     }
 
