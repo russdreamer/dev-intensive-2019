@@ -23,7 +23,7 @@ class CircleImageView @JvmOverloads constructor (
     }
 
     private var borderColor = DEFAULT_BORDER_COLOR
-    private var borderWidth = Utils.convertDpToPx(context, 2F)
+    private var borderWidth = Utils.convertDpToPx(context, 2)
 
     init {
         if (attrs != null) {
@@ -46,9 +46,9 @@ class CircleImageView @JvmOverloads constructor (
          canvas.drawBitmap(strokedBmp, 0F, 0F, null)
     }
 
-    fun getBorderWidth():Int = borderWidth
+    fun getBorderWidth():Int = Utils.convertPxToDp(context, borderWidth)
 
-    fun setBorderWidth(dp: Int) { borderWidth = dp }
+    fun setBorderWidth(dp: Int) { borderWidth = Utils.convertDpToPx(context, dp) }
 
     fun getBorderColor(): Int = borderColor
 

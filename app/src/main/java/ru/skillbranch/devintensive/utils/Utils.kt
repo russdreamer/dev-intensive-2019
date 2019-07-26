@@ -80,7 +80,12 @@ object Utils {
         return "$firstInit$secondInit".ifEmpty { null }
     }
 
-    fun convertDpToPx(context: Context, dp: Float): Int {
+    fun convertPxToDp(context: Context, px: Int): Int {
+        val scale = context.resources.displayMetrics.density
+        return (px / scale + 0.5f).toInt()
+    }
+
+    fun convertDpToPx(context: Context, dp: Int): Int {
         val scale = context.resources.displayMetrics.density
         return (dp * scale + 0.5f).toInt()
     }
