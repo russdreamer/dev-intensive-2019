@@ -46,7 +46,7 @@ class CircleImageView @JvmOverloads constructor (
          canvas.drawBitmap(strokedBmp, 0F, 0F, null)
     }
 
-    fun getBorderWidth(): Int = 4
+    fun getBorderWidth(): Int = Utils.convertPxToDp(context, borderWidth)
 
     fun setBorderWidth(dp: Int) {
         borderWidth = Utils.convertDpToPx(context, dp)
@@ -60,6 +60,20 @@ class CircleImageView @JvmOverloads constructor (
     fun setBorderColor(@ColorRes colorId: Int) {
         borderColor = resources.getColor(colorId, context.theme)
         this.invalidate()
+    }
+
+    fun generateAvatar(text: String, size: Int) : Bitmap{
+        val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+        paint.textSize = size.toFloat()
+        paint.color = resources.getColor(R.color.color_accent, context.theme)
+        paint.textAlign = Paint.Align.LEFT
+        val baseline = -paint.ascent()
+        val width = (paint.measureText(text) + 0.5f).toInt()
+        val height = (baseline + paint.descent() + 0.5f).toInt()
+        val image = Bitmap.createBitmap(width, height, Config.ARGB_8888)
+        val canvas = Canvas(image)
+        canvas.drawText(text, 0F, baseline, paint)
+        return image
     }
 
     private fun getStrokedBitmap(squareBmp: Bitmap, strokeWidth: Int, color: Int): Bitmap {
