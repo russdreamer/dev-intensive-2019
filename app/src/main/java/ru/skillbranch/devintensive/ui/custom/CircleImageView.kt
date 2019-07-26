@@ -48,13 +48,19 @@ class CircleImageView @JvmOverloads constructor (
 
     fun getBorderWidth():Int = Utils.convertPxToDp(context, borderWidth)
 
-    fun setBorderWidth(dp: Int) { borderWidth = Utils.convertDpToPx(context, dp) }
+    fun setBorderWidth(dp: Int) {
+        borderWidth = Utils.convertDpToPx(context, dp)
+        this.invalidate()
+    }
 
     fun getBorderColor(): Int = borderColor
 
     fun setBorderColor(hex: String) { borderColor = Color.parseColor(hex) }
 
-    fun setBorderColor(@ColorRes colorId: Int) { borderColor = colorId }
+    fun setBorderColor(@ColorRes colorId: Int) {
+        borderColor = colorId
+        this.invalidate()
+    }
 
     private fun getStrokedBitmap(squareBmp: Bitmap, strokeWidth: Int, color: Int): Bitmap {
         val inCircle = RectF()
