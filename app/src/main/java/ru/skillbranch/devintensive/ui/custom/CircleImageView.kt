@@ -1,11 +1,13 @@
 package ru.skillbranch.devintensive.ui.custom
 
 import android.content.Context
+import android.content.res.Resources
 import android.graphics.*
 import android.graphics.Bitmap.Config
 import android.graphics.PorterDuff.Mode
 import android.graphics.drawable.BitmapDrawable
 import android.util.AttributeSet
+import android.util.TypedValue
 import android.widget.ImageView
 import androidx.annotation.ColorRes
 import ru.skillbranch.devintensive.R
@@ -24,6 +26,8 @@ class CircleImageView @JvmOverloads constructor (
 
     private var borderColor = DEFAULT_BORDER_COLOR
     private var borderWidth = Utils.convertDpToPx(context, 2)
+    private var text: String? = null
+    private var bitmap: Bitmap? = null
 
     init {
         if (attrs != null) {
@@ -32,18 +36,6 @@ class CircleImageView @JvmOverloads constructor (
             borderWidth = attrVal.getDimensionPixelSize(R.styleable.CircleImageView_cv_borderWidth, borderWidth)
             attrVal.recycle()
         }
-    }
-
-     override fun onDraw(canvas: Canvas) {
-         val bitmap = getBitmapFromDrawable() ?: return
-         if (width == 0 || height == 0) return
-         
-         val scaledBmp = getScaledBitmap(bitmap, width)
-         val croppedBmp = getCenterCroppedBitmap(scaledBmp, width)
-         val circleBmp = getCircleBitmap(croppedBmp)
-         val strokedBmp = getStrokedBitmap(circleBmp, borderWidth, borderColor)
-
-         canvas.drawBitmap(strokedBmp, 0F, 0F, null)
     }
 
     fun getBorderWidth(): Int = Utils.convertPxToDp(context, borderWidth)
@@ -62,18 +54,42 @@ class CircleImageView @JvmOverloads constructor (
         this.invalidate()
     }
 
-    fun generateAvatar(text: String, size: Int) : Bitmap{
-        val paint = Paint(Paint.ANTI_ALIAS_FLAG)
-        paint.textSize = size.toFloat()
-        paint.color = resources.getColor(R.color.color_accent, context.theme)
-        paint.textAlign = Paint.Align.LEFT
-        val baseline = -paint.ascent()
-        val width = (paint.measureText(text) + 0.5f).toInt()
-        val height = (baseline + paint.descent() + 0.5f).toInt()
-        val image = Bitmap.createBitmap(width, height, Config.ARGB_8888)
-        val canvas = Canvas(image)
-        canvas.drawText(text, 0F, baseline, paint)
-        return image
+     override fun onDraw(canvas: Canvas) {
+         val bitmap = getBitmapFromDrawable() ?: return
+         if (width == 0 || height == 0) return
+         
+         val scaledBmp = getScaledBitmap(bitmap, width)
+         val croppedBmp = getCenterCroppedBitmap(scaledBmp, width)
+         val circleBmp = getCircleBitmap(croppedBmp)
+         val strokedBmp = getStrokedBitmap(circleBmp, borderWidth, borderColor)
+
+         canvas.drawBitmap(strokedBmp, 0F, 0F, null)
+    }
+
+    fun generateAvatar(text: String, size: Int, theme: Resources.Theme){
+        /* don't render if initials haven't changed */
+        if (bitmap == null && (this.text == null || !this.text.equals(text))){
+            val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+            paint.textSize = size.toFloat()
+            paint.color = Color.WHITE
+            paint.textAlign = Paint.Align.CENTER
+
+            val image = Bitmap.createBitmap(layoutParams.height, layoutParams.height, Config.ARGB_8888)
+            image.eraseColor(resources.getColor(R.color.color_accent, theme))
+            val canvas = Canvas(image)
+
+            val textBounds = Rect()
+            paint.getTextBounds(text, 0, text.length, textBounds)
+
+            val backgroundBounds = RectF()
+            backgroundBounds.set(0f, 0f, layoutParams.height.toFloat(), layoutParams.height.toFloat())
+
+            val textBottom = backgroundBounds.centerY() - textBounds.exactCenterY()
+            canvas.drawText(text, backgroundBounds.centerX(), textBottom, paint)
+
+            bitmap = image
+            invalidate()
+        }
     }
 
     private fun getStrokedBitmap(squareBmp: Bitmap, strokeWidth: Int, color: Int): Bitmap {
@@ -101,15 +117,18 @@ class CircleImageView @JvmOverloads constructor (
         return Bitmap.createBitmap(bitmap, cropStartX, cropStartY, size, size)
     }
 
-    private fun getScaledBitmap(bitmap: Bitmap, minSide: Int) =
-        if (bitmap.width != minSide || bitmap.height != minSide) {
+    private fun getScaledBitmap(bitmap: Bitmap, minSide: Int) : Bitmap {
+        return if (bitmap.width != minSide || bitmap.height != minSide) {
             val smallest = min(bitmap.width, bitmap.height).toFloat()
             val factor = smallest / minSide
             Bitmap.createScaledBitmap(bitmap, (bitmap.width / factor).toInt(), (bitmap.height / factor).toInt(), false)
-        }
-        else bitmap
+        } else bitmap
+    }
 
     private fun getBitmapFromDrawable(): Bitmap? {
+        if (bitmap != null)
+            return bitmap
+
         if (drawable == null)
             return null
 
