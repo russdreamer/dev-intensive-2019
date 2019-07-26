@@ -89,4 +89,8 @@ object Utils {
         val scale = context.resources.displayMetrics.density
         return (dp * scale + 0.5f).toInt()
     }
+
+    fun convertSpToPx(context: Context, sp: Int): Int {
+        return sp * context.resources.displayMetrics.scaledDensity.toInt()
+    }
 }
