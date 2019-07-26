@@ -7,6 +7,7 @@ import android.graphics.PorterDuff.Mode
 import android.graphics.drawable.BitmapDrawable
 import android.util.AttributeSet
 import android.widget.ImageView
+import androidx.annotation.ColorRes
 import ru.skillbranch.devintensive.R
 import ru.skillbranch.devintensive.utils.Utils
 import kotlin.math.min
@@ -43,6 +44,22 @@ class CircleImageView @JvmOverloads constructor (
          val strokedBmp = getStrokedBitmap(circleBmp, borderWidth, borderColor)
 
          canvas.drawBitmap(strokedBmp, 0F, 0F, null)
+    }
+
+    fun getBorderWidth():Int = borderWidth
+
+    fun setBorderWidth(dp: Int) {
+        borderWidth = Utils.convertDpToPx(context, dp.toFloat())
+    }
+
+    fun getBorderColor(): Int = borderColor
+
+    fun setBorderColor(hex: String) {
+        borderColor = Color.parseColor(hex)
+    }
+
+    fun setBorderColor(@ColorRes colorId: Int) {
+        borderColor = colorId
     }
 
     private fun getStrokedBitmap(squareBmp: Bitmap, strokeWidth: Int, color: Int): Bitmap {
