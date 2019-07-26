@@ -4,6 +4,8 @@ import android.graphics.ColorFilter
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
@@ -33,11 +35,22 @@ class ProfileActivity : AppCompatActivity() {
         initViewModel()
     }
 
-private fun initViewModel() {
-    viewModel = ViewModelProviders.of(this).get(ProfileViewModel::class.java)
-    viewModel.getProfileData().observe(this, Observer { updateUI(it) })
-    viewModel.getTheme().observe(this, Observer { updateTheme(it) })
-}
+    private fun initViewModel() {
+        viewModel = ViewModelProviders.of(this).get(ProfileViewModel::class.java)
+        viewModel.getProfileData().observe(this, Observer { updateUI(it) })
+        viewModel.getTheme().observe(this, Observer { updateTheme(it) })
+        viewModel.getRepositoryError().observe(this, Observer { updateRepoError(it) })
+        viewModel.getIsRepoError().observe(this, Observer { updateRepository(it) })
+    }
+
+    private fun updateRepository(isError: Boolean) {
+        if (isError) et_repository.text.clear()
+    }
+
+    private fun updateRepoError(isError: Boolean) {
+        wr_repository.isErrorEnabled = isError
+        wr_repository.error = if (isError) "Невалидный адрес репозитория" else null
+    }
 
     private fun updateTheme(mode: Int) {
         delegate.setLocalNightMode(mode)
@@ -66,10 +79,9 @@ private fun initViewModel() {
         showCurrentMode(isEditMode)
 
         btn_edit.setOnClickListener {
-            if (isEditMode) {
-                validateRepository()
-                saveProfileInfo()
-            }
+            viewModel.onRepoEditCompleted(wr_repository.isErrorEnabled)
+
+            if (isEditMode) saveProfileInfo()
             isEditMode = isEditMode.not()
             showCurrentMode(isEditMode)
         }
@@ -77,26 +89,14 @@ private fun initViewModel() {
         btn_switch_theme.setOnClickListener {
             viewModel.switchTheme()
         }
-    }
 
-    private fun validateRepository() {
-        val text = et_repository.text.toString()
-
-        val regexStr = "^(?:https://)?(?:www.)?(?:github.com/)[^/|\\s]+(?<!${getRegexExceptions()})(?:/)?$"
-        val regex = Regex(regexStr)
-
-        if (text.isNotEmpty() && !regex.matches(text)){
-            et_repository.text.clear()
-            wr_repository.error = "Невалидный адрес репозитория"
-        }
-    }
-
-    private fun getRegexExceptions(): String {
-        val exceptions = arrayOf(
-            "enterprise", "features", "topics", "collections", "trending", "events", "marketplace", "pricing",
-            "nonprofit", "customer-stories", "security", "login", "join"
-        )
-        return exceptions.joinToString("|\\b","\\b")
+        et_repository.addTextChangedListener(object: TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { }
+            override fun afterTextChanged(s: Editable?) {
+                viewModel.onRepositoryChanged(s.toString())
+            }
+        })
     }
 
     private fun showCurrentMode(isEdit: Boolean) {
