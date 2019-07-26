@@ -46,7 +46,7 @@ class CircleImageView @JvmOverloads constructor (
          canvas.drawBitmap(strokedBmp, 0F, 0F, null)
     }
 
-    fun getBorderWidth(): Int = Utils.convertPxToDp(context, borderWidth)
+    fun getBorderWidth(): Int = 4
 
     fun setBorderWidth(dp: Int) {
         borderWidth = Utils.convertDpToPx(context, dp)
