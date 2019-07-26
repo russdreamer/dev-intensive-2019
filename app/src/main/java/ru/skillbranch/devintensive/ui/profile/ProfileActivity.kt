@@ -80,7 +80,7 @@ private fun initViewModel() {
     }
 
     private fun validateRepository() {
-        val text = et_repository.text.toString().trim()
+        val text = et_repository.text.toString()
 
         val regexStr = "^(?:https://)?(?:www.)?(?:github.com/)[^/|\\s]+(?<!${getRegexExceptions()})(?:/)?$"
         val regex = Regex(regexStr)
