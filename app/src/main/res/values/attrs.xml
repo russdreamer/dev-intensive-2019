@@ -11,6 +11,8 @@
     <declare-styleable name="CircleImageView">
         <attr name="cv_borderColor" format="reference"/>
         <attr name="cv_borderWidth" format="dimension"/>
+        <attr name="highlightEnable" format="boolean"/>
+        <attr name="highlightColor" format="color"/>
     </declare-styleable>
 
 </resources>

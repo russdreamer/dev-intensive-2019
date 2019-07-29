@@ -1,55 +1,101 @@
 package ru.skillbranch.devintensive.ui.custom
 
+import android.annotation.TargetApi
 import android.content.Context
 import android.content.res.Resources
 import android.graphics.*
 import android.graphics.Bitmap.Config
 import android.graphics.PorterDuff.Mode
 import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
+import android.net.Uri
+import android.os.Build
 import android.util.AttributeSet
 import android.util.TypedValue
+import android.view.MotionEvent
+import android.view.View
+import android.view.ViewOutlineProvider
 import android.widget.ImageView
 import androidx.annotation.ColorRes
+import androidx.annotation.Dimension
 import androidx.core.content.ContextCompat
 import ru.skillbranch.devintensive.App
 import ru.skillbranch.devintensive.R
 import ru.skillbranch.devintensive.utils.Utils
 import kotlin.math.min
+import kotlin.math.pow
+import kotlin.math.roundToInt
+import kotlin.math.sqrt
 
 
-class CircleImageView @JvmOverloads constructor (
+open class CircleImageView @JvmOverloads constructor(
     context: Context,
-    attrs: AttributeSet? = null,
+    attrs: AttributeSet?,
     defStyleAttr: Int = 0
-): ImageView(context, attrs, defStyleAttr) {
+) : ImageView(context, attrs, defStyleAttr) {
+
     companion object {
         private const val DEFAULT_BORDER_COLOR: Int = Color.WHITE
+        private const val DEFAULT_BORDER_WIDTH = 2f
+        private const val DEFAULT_HIGHLIGHT_COLOR = 0x32000000
+        private const val DEFAULT_HIGHLIGHT_ENABLE = true
     }
 
     private var borderColor = DEFAULT_BORDER_COLOR
-    private var borderWidth = Utils.convertDpToPx(context, 2)
-    private var text: String? = null
+    private var borderWidth: Float = DEFAULT_BORDER_WIDTH
+    private var highlightColor = DEFAULT_HIGHLIGHT_COLOR
+    private var highlightEnable: Boolean = DEFAULT_HIGHLIGHT_ENABLE
+
+    private lateinit var bitmapShader: Shader
+    private var shaderMatrix: Matrix = Matrix()
+
+    private var bitmapDrawBounds: RectF = RectF()
+    private var strokeBounds: RectF = RectF()
+
     private var bitmap: Bitmap? = null
 
+    private var bitmapPaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private var strokePaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private var pressedPaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
+
+    private var initialized: Boolean = true
+    private var pPressed: Boolean = false
+
     init {
+        // getDimensionPixelSize: Retrieve a dimensional unit attribute for use as a size in raw pixels!!
+        // getDimension: Retrieve a dimensional unit attribute
+
         if (attrs != null) {
-            val attrVal = context.obtainStyledAttributes(attrs, R.styleable.CircleImageView)
-            borderColor = attrVal.getColor(R.styleable.CircleImageView_cv_borderColor, DEFAULT_BORDER_COLOR)
-            borderWidth = attrVal.getDimensionPixelSize(R.styleable.CircleImageView_cv_borderWidth, borderWidth)
-            attrVal.recycle()
+            val a = context.obtainStyledAttributes(attrs, R.styleable.CircleImageView)
+            borderColor = a.getColor(R.styleable.CircleImageView_cv_borderColor, DEFAULT_BORDER_COLOR)
+            borderWidth = a.getDimension(R.styleable.CircleImageView_cv_borderWidth, DEFAULT_BORDER_WIDTH)
+            highlightEnable = a.getBoolean(R.styleable.CircleImageView_highlightEnable, DEFAULT_HIGHLIGHT_ENABLE)
+            highlightColor = a.getColor(R.styleable.CircleImageView_highlightColor, DEFAULT_HIGHLIGHT_COLOR)
+            a.recycle()
         }
+
+        strokePaint.color = borderColor
+        strokePaint.style = Paint.Style.STROKE
+        strokePaint.strokeWidth = borderWidth
+
+        pressedPaint.color = highlightColor
+        pressedPaint.style = Paint.Style.FILL
+
+        setupBitmap()
     }
 
-    fun getBorderWidth(): Int = Utils.convertPxToDp(context, borderWidth)
+    @Dimension
+    fun getBorderWidth(): Int = borderWidth.roundToInt()
 
-    fun setBorderWidth(dp: Int) {
-        borderWidth = Utils.convertDpToPx(context, dp)
+    fun setBorderWidth(@Dimension dp: Int) {
+        borderWidth = dp.toFloat() // * resources.displayMetrics.density
         this.invalidate()
     }
 
     fun getBorderColor(): Int = borderColor
 
     fun setBorderColor(hex: String) {
+        // val strColor = String.format("#%06X", 0xFFFFFF & color)
         borderColor = Color.parseColor(hex)
         this.invalidate()
     }
@@ -59,136 +105,198 @@ class CircleImageView @JvmOverloads constructor (
         this.invalidate()
     }
 
-     override fun onDraw(canvas: Canvas) {
-         var bitmap = getBitmapFromDrawable() ?: return
-         if (width == 0 || height == 0) return
-
-         bitmap = getScaledBitmap(bitmap, width)
-         bitmap = getCenterCroppedBitmap(bitmap, width)
-         bitmap = getCircleBitmap(bitmap)
-
-         if (borderWidth > 0)
-             bitmap = getStrokedBitmap(bitmap, borderWidth, borderColor)
-
-         canvas.drawBitmap(bitmap, 0F, 0F, null)
+    override fun setImageResource(resId: Int) {
+        super.setImageResource(resId)
+        setupBitmap()
     }
 
-    fun generateAvatar(text: String?, sizeSp: Int, theme: Resources.Theme){
-        /* don't render if initials haven't changed */
-        if (bitmap == null || text != this.text){
-            val image =
-                if (text == null) {
-                    generateDefAvatar(theme)
-                }
-                else generateLetterAvatar(text, sizeSp, theme)
+    override fun setImageDrawable(drawable: Drawable?) {
+        super.setImageDrawable(drawable)
+        setupBitmap()
+    }
 
-            this.text = text
-            bitmap = image
-            invalidate()
+    override fun setImageBitmap(bm: Bitmap?) {
+        super.setImageBitmap(bm)
+        setupBitmap()
+    }
+
+    override fun setImageURI(uri: Uri?) {
+        super.setImageURI(uri)
+        setupBitmap()
+    }
+
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+
+        val halfStrokeWidth = strokePaint.strokeWidth / 2f
+        updateCircleDrawBounds(bitmapDrawBounds)
+        strokeBounds.set(bitmapDrawBounds)
+        strokeBounds.inset(halfStrokeWidth, halfStrokeWidth)
+
+        updateBitmapSize()
+
+        outlineProvider = CircleImageViewOutlineProvider(strokeBounds)
+    }
+
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        var processed = false
+        when (event?.action) {
+            MotionEvent.ACTION_DOWN -> {
+                if (!isInCircle(event.x, event.y)) return false
+                processed = true
+                pPressed = true
+                invalidate()
+            }
+            MotionEvent.ACTION_CANCEL -> {
+            }
+            MotionEvent.ACTION_UP -> {
+                processed = true
+                pPressed = false
+                invalidate()
+                if (!isInCircle(event.x, event.y)) return false
+            }
+        }
+        return super.onTouchEvent(event) || processed
+    }
+
+    //  onDraw will be called automatically by the framework when we call invalidate() or when it needs to be redrawn.
+    override fun onDraw(canvas: Canvas?) {
+        drawBitmap(canvas)
+        drawStroke(canvas)
+        drawHighlight(canvas)
+    }
+
+    private fun drawBitmap(canvas: Canvas?) {
+        canvas?.drawOval(bitmapDrawBounds, bitmapPaint)
+    }
+
+    private fun drawStroke(canvas: Canvas?) {
+        if (strokePaint.strokeWidth > 0f) {
+            canvas?.drawOval(strokeBounds, strokePaint)
         }
     }
 
-    private fun generateLetterAvatar(text: String, sizeSp: Int, theme: Resources.Theme): Bitmap {
-        val image = generateDefAvatar(theme)
+    private fun drawHighlight(canvas: Canvas?) {
+        if (highlightEnable && pPressed) {
+            canvas?.drawOval(bitmapDrawBounds, pressedPaint)
+        }
+    }
 
+    private fun updateCircleDrawBounds(bounds: RectF) {
+        val contentWidth = width - paddingLeft - paddingRight
+        val contentHeight = height - paddingTop - paddingBottom
+
+        var left: Float = paddingLeft.toFloat()
+        var top: Float = paddingRight.toFloat()
+
+        // we'll center bounds by translating left/top
+        // so that the rendered circle always in the center of view
+        if (contentWidth > contentHeight) {
+            left += (contentWidth - contentHeight) / 2f
+        } else {
+            top += (contentHeight - contentWidth) / 2f
+        }
+
+        val diameter = min(contentWidth, contentHeight)
+        bounds.set(left, top, left + diameter, top + diameter)
+    }
+
+    private fun setupBitmap() {
+        if (initialized.not() || drawable == null) return
+        bitmap = getBitmapFromDrawable(drawable)
+        val bm = bitmap ?: return
+
+        bitmapShader = BitmapShader(bm, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP)
+        bitmapPaint.shader = bitmapShader
+
+        updateBitmapSize()
+    }
+
+    private fun updateBitmapSize() {
+        val bm = bitmap ?: return
+
+        val scale: Float
+        val dx: Float
+        val dy: Float
+
+        if (bm.width < bm.height) {
+            scale = bitmapDrawBounds.width() / bm.width
+            dx = bitmapDrawBounds.left
+            dy = bitmapDrawBounds.top - (bm.height * scale / 2f) + (bitmapDrawBounds.width() / 2f)
+        } else {
+            scale = bitmapDrawBounds.height() / bm.height
+            dx = bitmapDrawBounds.left - (bm.width * scale / 2f) + (bitmapDrawBounds.width() / 2f)
+            dy = bitmapDrawBounds.top
+        }
+
+        shaderMatrix.setScale(scale, scale)
+        shaderMatrix.postTranslate(dx, dy)
+        bitmapShader.setLocalMatrix(shaderMatrix)
+    }
+
+    private fun getBitmapFromDrawable(drawable: Drawable): Bitmap {
+        if (drawable is BitmapDrawable) return drawable.bitmap
+
+        val bitmap = Bitmap.createBitmap(
+            drawable.intrinsicWidth,
+            drawable.intrinsicHeight,
+            Bitmap.Config.ARGB_8888
+        )
+
+        val canvas = Canvas(bitmap)
+        drawable.setBounds(0, 0, canvas.width, canvas.height)
+        drawable.draw(canvas)
+        return bitmap
+    }
+
+    private fun isInCircle(x: Float, y: Float): Boolean {
+        val distance = sqrt((bitmapDrawBounds.centerX() - x).pow(2) + (bitmapDrawBounds.centerY() - y).pow(2))
+        return distance <= (bitmapDrawBounds.width() / 2)
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    class CircleImageViewOutlineProvider(rectF: RectF) : ViewOutlineProvider() {
+        private val rect = Rect(
+            rectF.left.toInt(),
+            rectF.right.toInt(),
+            rectF.left.toInt(),
+            rectF.bottom.toInt()
+        )
+
+        override fun getOutline(view: View?, outline: Outline?) {
+            outline?.setOval(rect)
+        }
+
+    }//        2130903176
+
+
+    fun setDefaultAvatar(text: String, theme: Resources.Theme) {
         val paint = Paint(Paint.ANTI_ALIAS_FLAG)
-        paint.textSize = sizeSp.toFloat()
+        // @param textSize set the paint's text size in pixel units.
+        paint.textSize = Utils.convertSpToPx(this.context, 48).toFloat()
         paint.color = Color.WHITE
         paint.textAlign = Paint.Align.CENTER
 
-        val textBounds = Rect()
-        paint.getTextBounds(text, 0, text.length, textBounds)
+        val image = Bitmap.createBitmap(layoutParams.width, layoutParams.height, Bitmap.Config.ARGB_8888)
 
-        val backgroundBounds = RectF()
-        backgroundBounds.set(0f, 0f, layoutParams.height.toFloat(), layoutParams.height.toFloat())
-
-        val textBottom = backgroundBounds.centerY() - textBounds.exactCenterY()
-        val canvas = Canvas(image)
-        canvas.drawText(text, backgroundBounds.centerX(), textBottom, paint)
-
-        return image
-    }
-
-    private fun generateDefAvatar(theme: Resources.Theme): Bitmap {
-        val image = Bitmap.createBitmap(layoutParams.height, layoutParams.height, Config.ARGB_8888)
         val color = TypedValue()
+        val colorInt = R.attr.colorAccent
         theme.resolveAttribute(R.attr.colorAccent, color, true)
 
         val canvas = Canvas(image)
         canvas.drawColor(color.data)
 
-        return image
-    }
+        val textBounds = Rect()
+        paint.getTextBounds(text, 0, text.length, textBounds)
 
-    private fun getStrokedBitmap(squareBmp: Bitmap, strokeWidth: Int, color: Int): Bitmap {
-        val inCircle = RectF()
-        val strokeStart = strokeWidth / 2F
-        val strokeEnd = squareBmp.width - strokeWidth / 2F
+        val backgroundBounds = RectF()
+        backgroundBounds.set(0f, 0f, layoutParams.width.toFloat(), layoutParams.height.toFloat())
 
-        inCircle.set(strokeStart , strokeStart, strokeEnd, strokeEnd)
+        val textBottom = backgroundBounds.centerY() - textBounds.exactCenterY()
+        canvas.drawText(text, backgroundBounds.centerX(), textBottom, paint)
 
-        val strokePaint = Paint(Paint.ANTI_ALIAS_FLAG)
-        strokePaint.color = color
-        strokePaint.style = Paint.Style.STROKE
-        strokePaint.strokeWidth = strokeWidth.toFloat()
-
-        val canvas = Canvas(squareBmp)
-        canvas.drawOval(inCircle, strokePaint)
-
-        return squareBmp
-    }
-
-    private fun getCenterCroppedBitmap(bitmap: Bitmap, size: Int): Bitmap {
-        val cropStartX = (bitmap.width - size) / 2
-        val cropStartY = (bitmap.height - size) / 2
-        
-        return Bitmap.createBitmap(bitmap, cropStartX, cropStartY, size, size)
-    }
-
-    private fun getScaledBitmap(bitmap: Bitmap, minSide: Int) : Bitmap {
-        return if (bitmap.width != minSide || bitmap.height != minSide) {
-            val smallest = min(bitmap.width, bitmap.height).toFloat()
-            val factor = smallest / minSide
-            Bitmap.createScaledBitmap(bitmap, (bitmap.width / factor).toInt(), (bitmap.height / factor).toInt(), false)
-        } else bitmap
-    }
-
-    private fun getBitmapFromDrawable(): Bitmap? {
-        if (bitmap != null)
-            return bitmap
-
-        if (drawable == null)
-            return null
-
-        if (drawable is BitmapDrawable)
-            return (drawable as BitmapDrawable).bitmap
-
-        val bitmap = Bitmap.createBitmap(drawable.intrinsicWidth, drawable.intrinsicHeight, Config.ARGB_8888)
-        val canvas = Canvas(bitmap)
-        drawable.setBounds(0, 0, canvas.width, canvas.height)
-        drawable.draw(canvas)
-
-        return bitmap
-    }
-
-    private fun getCircleBitmap(bitmap: Bitmap): Bitmap {
-        val smallest = min(bitmap.width, bitmap.height)
-        val outputBmp = Bitmap.createBitmap(smallest, smallest, Config.ARGB_8888)
-        val canvas = Canvas(outputBmp)
-
-        val paint = Paint()
-        val rect = Rect(0, 0, smallest, smallest)
-
-        paint.isAntiAlias = true
-        paint.isFilterBitmap = true
-        paint.isDither = true
-        canvas.drawARGB(0, 0, 0, 0)
-        canvas.drawCircle(smallest / 2F, smallest / 2F, smallest / 2F, paint)
-
-        paint.xfermode = PorterDuffXfermode(Mode.SRC_IN)
-        canvas.drawBitmap(bitmap, rect, rect, paint)
-
-        return outputBmp
+        // setImageDrawable(BitmapDrawable(resources, image))
+        setImageBitmap(image)
     }
 }
 
