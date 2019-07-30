@@ -154,7 +154,6 @@ class ProfileActivity : AppCompatActivity() {
     private fun updateAvatar(profile: Profile){
         val initials = Utils.toInitials(profile.firstName, profile.lastName)
         iv_avatar.generateAvatar(initials, Utils.convertSpToPx(this, 48), theme)
-
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
