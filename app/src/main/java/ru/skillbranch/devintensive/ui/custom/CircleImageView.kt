@@ -29,7 +29,6 @@ class CircleImageView @JvmOverloads constructor (
     private var borderColor = DEFAULT_BORDER_COLOR
     private var borderWidth = Utils.convertDpToPx(context, 2)
     private var text: String? = null
-    private var bitmap: Bitmap? = null
 
     init {
         if (attrs != null) {
@@ -75,7 +74,7 @@ class CircleImageView @JvmOverloads constructor (
 
     fun generateAvatar(text: String?, sizeSp: Int, theme: Resources.Theme){
         /* don't render if initials haven't changed */
-        if (bitmap == null || text != this.text){
+        if (text != this.text){
             val image =
                 if (text == null) {
                     generateDefAvatar(theme)
@@ -83,9 +82,7 @@ class CircleImageView @JvmOverloads constructor (
                 else generateLetterAvatar(text, sizeSp, theme)
 
             this.text = text
-            bitmap = image
-            //setImageBitmap(bitmap)
-            invalidate()
+            setImageBitmap(image)
         }
     }
 
@@ -156,9 +153,6 @@ class CircleImageView @JvmOverloads constructor (
     }
 
     private fun getBitmapFromDrawable(): Bitmap? {
-        if (bitmap != null)
-            return bitmap
-
         if (drawable == null)
             return null
 
