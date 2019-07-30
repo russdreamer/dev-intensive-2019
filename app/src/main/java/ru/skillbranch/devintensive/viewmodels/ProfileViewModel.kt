@@ -57,7 +57,7 @@ class ProfileViewModel: ViewModel() {
         }
 
         private fun isValidateRepository(repoText: String): Boolean {
-            val regexStr = "^(?:https://)?(?:www.)?(?:github.com/)[^/|\\s]+(?<!${getRegexExceptions()})(?:/)?$"
+            val regexStr = "^(https:\\/\\/)?(www\\.)?(github\\.com\\/)(?!(${getRegexExceptions()})(?=\\/|\$))[a-zA-Z\\d](?:[a-zA-Z\\d]|-(?=[a-zA-Z\\d])){0,38}(\\/)?$"
             val regex = Regex(regexStr)
 
             return (repoText.isNotEmpty() && !regex.matches(repoText))
@@ -68,6 +68,6 @@ class ProfileViewModel: ViewModel() {
                 "enterprise", "features", "topics", "collections", "trending", "events", "marketplace", "pricing",
                 "nonprofit", "customer-stories", "security", "login", "join"
             )
-            return exceptions.joinToString("|\\b","\\b")
+            return exceptions.joinToString("|")
         }
 }
