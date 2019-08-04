@@ -23,9 +23,8 @@ class TextBitmapBuilder(val width: Int, val height: Int) {
         val canvas = Canvas(bitmap)
         canvas.drawColor(bgColor)
 
-        if (text.isNotEmpty()) {
+        if (text.isNotEmpty())
             drawText(canvas)
-        }
 
         return bitmap
     }

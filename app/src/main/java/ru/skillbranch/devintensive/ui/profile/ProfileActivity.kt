@@ -157,9 +157,7 @@ class ProfileActivity : AppCompatActivity() {
                 val avatar = getAvatarBitmap(it)
                 iv_avatar.setImageBitmap(avatar)
             }
-        }
-            ?: iv_avatar.setImageResource(R.drawable.avatar_default)
-
+        } ?: iv_avatar.setImageResource(R.drawable.avatar_default)
     }
 
     private fun getAvatarBitmap(text: String): Bitmap {
