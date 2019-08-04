@@ -1,8 +1,6 @@
 package ru.skillbranch.devintensive.ui.profile
 
-import android.graphics.ColorFilter
-import android.graphics.PorterDuff
-import android.graphics.PorterDuffColorFilter
+import android.graphics.*
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -16,6 +14,7 @@ import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.activity_profile.*
 import ru.skillbranch.devintensive.R
 import ru.skillbranch.devintensive.models.Profile
+import ru.skillbranch.devintensive.ui.custom.TextBitmapBuilder
 import ru.skillbranch.devintensive.utils.Utils
 import ru.skillbranch.devintensive.viewmodels.ProfileViewModel
 
@@ -28,6 +27,7 @@ class ProfileActivity : AppCompatActivity() {
     private lateinit var viewModel: ProfileViewModel
     var isEditMode = false
     lateinit var viewFields: Map<String, TextView>
+    private var userInitials: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.AppTheme)
@@ -153,10 +153,25 @@ class ProfileActivity : AppCompatActivity() {
 
     private fun updateAvatar(profile: Profile){
         Utils.toInitials(profile.firstName, profile.lastName)?.let {
-            iv_avatar.generateAvatar(it, Utils.convertSpToPx(this, 48), theme)
+            if (it != userInitials) {
+                val avatar = getAvatarBitmap(it)
+                iv_avatar.setImageBitmap(avatar)
+            }
         }
             ?: iv_avatar.setImageResource(R.drawable.avatar_default)
 
+    }
+
+    private fun getAvatarBitmap(text: String): Bitmap {
+        val color = TypedValue()
+        theme.resolveAttribute(R.attr.colorAccent, color, true)
+
+        return TextBitmapBuilder(iv_avatar.layoutParams.width, iv_avatar.layoutParams.height)
+            .setBackgroundColor(color.data)
+            .setText(text)
+            .setTextSize(Utils.convertSpToPx(this, 48))
+            .setTextColor(Color.WHITE)
+            .build()
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
